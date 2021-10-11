@@ -171,7 +171,7 @@ def standard_demo():
     """
     # 1.获取数据
     data = pandas.read_csv("./ins/dating.txt")
-    # data = data.iloc[:, :3]
+    data = data.iloc[:, :3]
     print("data:\n", data)
 
     # 2.实例化一个转换器类

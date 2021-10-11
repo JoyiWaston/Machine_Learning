@@ -136,3 +136,15 @@
         * accuracy:location accuracy
         * time:timestamp
         * place_id:id of the business,this is the target you are predicting
+    # 流程分析：
+        1）获取数据
+        2）数据处理
+        目的：
+            特征值
+            目标值
+            a.time -> 年月日时分秒
+            b.过滤签到次数少的地点
+        3）特征工程：标准化
+        4）KNN算法预估流程
+        5）模型选择与调优
+        6）模型评估

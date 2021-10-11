@@ -1,9 +1,9 @@
 import random
 
 # 打开dating.txt文件准备数据写入
-fo = open("dating.txt", "w")
+fo = open("./ins/dating.txt", "w")
 # 循环写入1000个数据
-fo.write('mileage,Liters,pastime,target\n')
+fo.write('Mileage,Liters,Pastime,Target\n')
 for turn1 in range(1000):
     data = [random.randint(5000, 80000), random.uniform(0, 20), random.uniform(1, 2), random.randint(1, 3)]
     data_new = ','.join(str(turn2) for turn2 in data)
