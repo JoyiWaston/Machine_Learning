@@ -148,3 +148,46 @@
         4）KNN算法预估流程
         5）模型选择与调优
         6）模型评估
+
+### 4.朴素贝叶斯算法
+    # P(A,B) ; P(A|B) ; P(A,B) = P(A)P(B)
+    # 贝叶斯公式 P(C|W) = P(W|C)P(C) / P(W)  
+    # 注意：w为给定文档的特征值（频数统计，预测文档给定），c为文档类别
+    # 朴素：假设特征与特征之间相互独立
+    # 朴素贝叶斯算法：朴素+贝叶斯
+    # 应用场景：文本分类，情感分析，单词作为特征
+    # 思考：若概率求得为零，合理？
+        - 所以引入拉普拉斯平滑系数，为防止计算出的分类概率为零
+        - P(F1|C) = （Ni+α）/(N+αm)   α一般为1，m为训练文档中统计出的特征词的个数
+    # sklearn.naive_bayes.MultinomialNB(alpha = 1.0)
+# 案例：20类新闻分类
+    1）获取数据
+    2）划分数据集
+    3）特征工程
+        文本特征抽取
+    4）朴素贝叶斯预估器流程
+    5）模型调优评估
+### 5.决策树
+    # 如何高效的进行决策？
+    # 特征的先后顺序 
+    # 信息论基础：
+        - 信息：（香农布朗）消除随机不定性的东西
+        - 信息熵
+    # 原理：
+        - 信息熵，信息增益等（信息论）
+        - H的专业术语称为信息熵，单位：比特 H（X）= -（从i到n求和）P（Xi）logbP（Xi）
+    # 决策树划分依据之一   ——————   信息增益 最大的准则
+        - 特征A对训练集D的信息增益g(D,A),定义为集合D的信息熵H（D）与特征A给定条件下D的信息条件熵H（D|A)之差
+            * 公式为：g(D,A) = H(D)-H(D|A)
+        - 信息增益比：最大的准则
+        - 分类树：基尼系数 最小的准则 在sklearn中可以选择划分的默认原则
+        - 优势：划分更加细致
+    # class sklearn.tree.DecisionTreeClassifier(criterion='gini',max_depth=None,random_state=None)
+        - 决策树分类器
+        - criterion：默认是gini系数，也可以选择信息增益的熵entropy
+        - max_depth：树的深度大小
+        - random_state：随机数种子
+    # 决策树可视化：sklearn.tree.export_graphviz()能到处DOT格式
+        - tree.export_graphviz(estimator,out_file="tree.dot",feature_names['','']
+# 案例：泰坦尼克号生还者预测
+    # 
