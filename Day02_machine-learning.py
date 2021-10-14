@@ -146,10 +146,11 @@ def decision_tree_iris():
     print("准确率为：\n", score)
 
     # 5.可视化决策树
-    dot_data = export_graphviz(estimator, out_file="iris_tree.dot", feature_names=iris.feature_names)
+    dot_data = export_graphviz(estimator, out_file=None, feature_names=iris.feature_names)
+    graph = graphviz.Source(dot_data)
+    graph.render("iris_tree可视化")
 
     return None
-
 
 
 if __name__ == "__main__":
