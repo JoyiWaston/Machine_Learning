@@ -189,5 +189,115 @@
         - random_state：随机数种子
     # 决策树可视化：sklearn.tree.export_graphviz()能到处DOT格式
         - tree.export_graphviz(estimator,out_file="tree.dot",feature_names['','']
+    # 优点：可视化 - 可解释力强
+    # 缺点：容易产生过拟合
+    # 改进：
+        - 减枝cart算法（决策树API已经实现，随机森林参数调优介绍）
+        - 随机森林
 # 案例：泰坦尼克号生还者预测
-    # 
+    # 流程分析：特征值和目标值
+        - 1）获取数据
+        - 2）数据处理
+            * 缺失值处理
+            * 特征值 -> 字典类型
+            * 
+        - 3）准备特征值 目标值
+        - 4）划分数据集
+        - 5）特征工程：字典特征抽取
+        - 6）决策树预估器流程
+        - 7）模型评估
+### 6.集成化学习方法：随机森林
+    # 集成学习方法：通过建立几个模型组合来解决单一预测问题
+        - 原理：生成多个分类器/模型，各自独立地学习和做出预测，这些预测最后结合成组合预测，因此优于任何一个单分类做出的预测
+    # 随机森林：一个包含多个决策树的分类器，并且其输出的类别是由个别树输出的类别的众数而定
+    # 训练集随机 ：bootstrap 随机有放回抽样  N个样本随机有放回抽样N个
+    # 特征随机 ：从M个特征中随机抽取m个特征  M >> m       降维
+    # class sklearn.ensemble.RandomForestClassifier(n_estimator=10,criterion='gini',
+        max_depth=None,bootstrap=True,random_state=None,min_samples_split=2)    
+        - 随机森林分类器
+        - n_estimator：integer,optional(default=10) 森林里的树木数量
+        - criteria：string，可选分割特征的测量方法
+        - max_depth最大深度
+        - max_features每个决策树的最大特征数量
+        - bootstrap: boolean,optional(default = True)是否在构建树时使用放回抽样
+        - min_samples_split:节点划分最少样本数
+        - min_samples_leaf:叶子节点的最少样本数
+    # 总结：
+        - 在所有算法中有极好的准确率
+        - 处理具有高维度特征的输入样本，而且不需要降维
+# 回归和聚类算法
+### 线性回归
+    # 回归问题：目标值 - 连续性数据
+    # 应用：房价预测 销售额预测 金融预测
+    # 定义：利用回归方程对一个或多个自变量（特征值）和应变量（目标值）之间关系进行建模
+    # 数据挖掘
+    # 单自变量单元回归，多自变量多元回归
+    # 广义线性模型
+        非线性关系？
+    # 损失函数：最小二乘法    通过求导优化模型总损失
+        - 正规方程 - 直接求解
+        - 拓展： 
+            1) y = ax^2+bx+c    y'=2ax + b    x = -b/2a
+            2) a*b=1  -> b=1/a=a^-1         A*B=E                   B=A^-1
+                                                    [[1, 0, 0],
+                                                     [0, 1, 0],
+                                                     [0, 0, 1]]
+        - 梯度下降 - 不断试错改进
+    # sklearn.linear_model.LinearRegression(fit_intercept = True)
+        - 通过正规方程优化
+        - fit_intercept是否计算偏置
+        - LinearRegression.coef_ 回归系数
+        - LinearRegression.intercept:偏置
+    # sklearn.linear_model.SGDRegressor(loss="squared_loss",fit_intercept=True,learning_rate='invscaling',eta0=0.01)
+        - SGDRegressor类实现了随机梯度下降，它支持不同的loss函数和正则化惩罚项来拟合线性回归模型
+        - loss:损失类型         “squared_loss”:普通最小二乘法
+        - fit_intercept:是否计算偏置
+        - learning_rate：spring,optional
+            * 学习率填充（步长）
+            * 'constant':eta = eta0
+            * 'optimal':eta = 1.0 / (alpha * (t+10))[default]
+            * 'invscaling':eta = eta0 / pow(t,power_t)          power_t=0.25存在于父类中
+            * 对于一个常数值的学习率来书，可以使用learning_rate=‘constant’,并使用eta0来指定学习率
+            * SGDRegressor.coef_        回归系数
+            * SGDRegressor.intercept_   偏置
+
+# 案例：波士顿房价预测
+    # 流程
+        1）获取数据集
+        2）划分数据集
+        3）特征工程：无量纲化-标准化     
+        4）预估器流程     fit（） ---> 模型  coef_  intercept_    
+        5）模型评估
+    # 回归性能评估    均方误差：sklearn.metrics.mean_squared_error(y_true,y_pred)
+    
+### 欠拟合与过拟合
+    # 训练集表现好，测试集表现不好————过拟合
+    # 特征过少欠拟合，特征过多过拟合
+    # 欠拟合：
+        - 原因：学习到的数据特征过少
+        - 解决办法：增加数据特征数量
+    # 过拟合：
+        - 原因：原始特征过多，存在嘈杂特征，模型过于复杂，因为模型尝试去兼顾各个测试数据点
+        - 解决办法：正则化
+            * L1正则化：
+                1）作用：可以使其中一些参数的值直接为0，删除这个特征的影响
+                2）LASSO回归  损失函数 + λ惩罚项（|w|累加 = 删除）
+            * L2正则化：损失函数 + λ惩罚项（w^2累加 = 削弱）
+                1）作用：可以使其中的一些参数变得很小，接近于零，削弱某个特征的影响
+                2）优点：越小的参数说明模型越简单，越简单的模型则越不容易产生过拟合现象
+                3）Ridge回归  损失函数 + λ惩罚项（w^2累加 = 削弱）
+                4）加入L2正则化后的损失函数：J（w） = 1/2m (求和从1到m）(Hw(Xi)-Yi)^2+λ（求和从1到n）Wj^2
+                                                                            惩罚项：λ（求和从1到n）Wj^2
+### 岭回归
+    # 建立回归方程时加L2正则化限制，从而解决过拟合的效果
+    # sklearn.linear_model.Ridge(alpha=1.0,fit_intercept=True,solver="auto",normalize=Faise)
+        - alpha：正则化力度，也叫λ，0<λ<1 or 1<λ<10   惩罚项系数
+        - solver：会根据数据自动选择优化方法
+            * sag：如果数据集，特征都比较大，选择该随机梯度下降优化
+        - normalize：数据是否进行标准化
+        - Ridge.coef_
+        _ Ridge.intercept_
+    # sklearn.linear_model.RidgeCV_BaseRidgeCV()
+### 分类算法：逻辑回归
+### 模型保存与加载
+### 无监督学习k-means算法
