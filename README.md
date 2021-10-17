@@ -297,7 +297,115 @@
         - normalize：数据是否进行标准化
         - Ridge.coef_
         _ Ridge.intercept_
-    # sklearn.linear_model.RidgeCV_BaseRidgeCV()
-### 分类算法：逻辑回归
+    # sklearn.linear_model.RidgeCV(_BaseRidgeCV,RegressorMixin)
+        - 具有L2正则化的线性回归，可以进行交叉验证
+        - coef_回归系数
+    # 正则化力度与权重系数成反比例关系
+### 分类算法：逻辑回归_二分类
+    # 应用：两个类别之间的判断
+    # 原理：h（w）= w1x1+w2x2+...+b  逻辑回归的输入是线性回归的输出
+    # 激活函数  sigmoid函数   g（θ^T x）= 1/(1+e^(-θ^T x）
+    # 总结：线性回归的输出 映射到sigmoid函数上 作为逻辑回归的输入 二分类
+    # 假设函数/线性模型
+    # 损失函数：
+        - 逻辑回归的真实值/预测值：是否属于某个类别
+        - 对数似然损失
+        - 分开类别
+        - 综合完整损失函数
+    # 优化损失：梯度下降
+    # sklearn.linear_model.LogisticRegression(solver='liblinear',penalty='l2',C=1.0)
+        - （有sag方法）solver优化求解方法（默认开源的liblinear实现，内部使用坐标轴下降法来迭代优化损失函数）
+        - penalty正则化种类
+        - C正则化力度
+        - 默认将类别数量少的当作正例
+    # SGDClassifer（loss="log",penalty="")
+        - 普通随机梯度下降，可通过设置使用平均随机梯度下降法ASGD，可使average=True
+![img_2.png](img_2.png)
+![img_1.png](img_1.png)
+# 案例：癌症分类预测-良/恶性乳腺肿瘤预测
+    # 恶性肿瘤为正例
+    # 流程分析
+        1）获取数据：读取加上names
+        2）数据处理：处理缺失值
+        3）数据集划分
+        4）特征工程：无量纲化——标准化
+        5）逻辑回归预估器
+        6）模型评估
+    # 真的患癌症的，能够被检测出来的概率：召回率（对正样本的区分能力）
+    # 分类的评估方法
+        - 精确率和召回率
+            * 混淆矩阵：预测结果和正确标记之间存在四种组合，构成混淆矩阵（多分类）
+                1）TP FN FP TN       True Possitive False Negative
+            * 精确率（Precision）：预测结果为正例样本中真实为正例的比例（了解）
+            * 召回率（Recall）：真是为正例的样本中预测结果为正例的比例（查的全，对正样本的区分能力）
+            * F1-score反映了模型稳健性   F1=2TP/(2TP+FN+NP)=2PR/(P+R)
+        - sklearn.metrics.classification_report(y_true,y_pred,labels=[],target_names=None)
+            * y_true:真实目标值
+            * y_pred:估计器预测目标值
+            * labels:指定类别对应数字
+            * target_name:目标类别名字
+            * return:每个类别精确率和召回率
+        - 如何衡量样本不均衡下的评估？
+            * 
+        - ROC曲线和AUC指标
+            * TPR=TP/(TP+FN) 所有真实类别为1的样本中，预测类别为1的正例
+            * FPR=FP/(FP+TN) 所有真实类别为0的样本中，预测类别为1的正例
+            * AUC指标：
+            * AUC的概率意义是随机取一对正负样本，正样本得分大于负样本的概率
+            * AUC的最小值为0.5，最大值为1，取值越高越好
+            * AUC=1，完美分类器，采用这个预测模型时，不管设定什么阈值都能得出完美预测。绝大多数预测的场合，不存在完美分类器。
+            * 0.5<AUC<1，优于随机猜测。这个分类器（模型）妥善设定阈值的话，能有预测价值。
+            * 最终AUC的范围在[0.5, 1]之间，并且越接近1越好
+        - sklearn.metrics.roc_auc_score(y_true, y_score)
+            * 计算ROC曲线面积，即AUC值
+            * y_true:每个样本的真实类别，必须为0(反例),1(正例)标记
+            * y_score:每个样本预测的概率值
+        - 总结：
+            * AUC只能用来评价二分类
+            * AUC非常适合评价样本不平衡中的分类器性能
+![img_3.png](img_3.png)
 ### 模型保存与加载
-### 无监督学习k-means算法
+    # from sklearn.externals import joblib
+        - 保存：joblib.dump(rf, 'test.pkl')
+        - 加载：estimator = joblib.load('test.pkl')
+### 无监督学习   eg: k-means算法
+    # 没有目标值-无监督学习
+    # K-means聚类步骤
+        1、随机设置K个特征空间内的点作为初始的聚类中心
+        2、对于其他每个点计算到K个中心的距离，未知的点选择最近的一个聚类中心点作为标记类别
+        3、接着对着标记的聚类中心之后，重新计算出每个聚类的新中心点（平均值）
+        4、如果计算得出的新中心点与原中心点一样，那么结束，否则重新进行第二步过程
+    # sklearn.cluster.KMeans(n_clusters=8,init=‘k-means++’)
+        * k-means聚类
+        * n_clusters:开始的聚类中心数量
+        * init:初始化方法，默认为'k-means ++’
+        * labels_:默认标记的类型，可以和真实值比较（不是值比较）
+![img_4.png](img_4.png) 
+# 案例：K—means对Instacart Market用户聚类
+    k = 3
+### 流程分析
+        * 降维后的数据
+            1）预估器流程
+            2）看结果
+            3）模型评估
+    
+### Kmeans性能评估指标
+    # 注：对于每个点i 为已聚类数据中的样本 ，b_i 为i 到其它族群的所有样本的距离最小值，
+      a_i 为i 到本身簇的距离平均值。最终计算出所有的样本点的轮廓系数平均值
+    # 分析过程（我们以一个蓝1点为例）
+        1、计算出蓝1离本身族群所有点的距离的平均值a_i
+        2、蓝1到其它两个族群的距离计算出平均值红平均，绿平均，取最小的那个距离作为b_i
+        3、根据公式：极端值考虑：如果b_i >>a_i: 那么公式结果趋近于1；如果a_i>>>b_i: 那么公式结果趋近于-1
+    # 结论：如果b_i>>a_i:趋近于1效果越好， b_i<<a_i:趋近于-1，效果不好。
+           轮廓系数的值是介于 [-1,1] ，越趋近于1代表内聚度和分离度都相对较优。
+    # sklearn.metrics.silhouette_score(X, labels)
+        1.计算所有样本的平均轮廓系数
+        2.X：特征值
+        3.labels：被聚类标记的目标值
+    # K-means总结：
+        特点分析：采用迭代式算法，直观易懂并且非常实用
+        缺点：容易收敛到局部最优解(多次聚类)
+        注意：聚类一般做在分类之前
+        
+![img_5.png](img_5.png)
+![img_6.png](img_6.png)
